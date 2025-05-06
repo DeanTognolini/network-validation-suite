@@ -13,36 +13,6 @@ This suite provides automated testing for:
 - LDP Peer Validation
 - MPLS Configuration and Operation
 
-## Project Structure
-
-```
-network-validation-suite/
-├── README.md                     # Project documentation
-├── testbed.yaml                  # Network device definitions
-├── network_validation_job.py     # Main job file
-├── tests/                        # Test scripts directory
-│   ├── config_validator.py       # Configuration validation
-│   ├── topology_validator.py     # CDP neighbor validation
-│   ├── ospf_validator.py         # OSPF validation
-│   ├── bgp_validator.py          # BGP validation
-│   ├── ldp_validator.py          # LDP validation
-│   └── mpls_validator.py         # MPLS validation
-├── config/                       # Expected configuration files
-│   ├── expected_bgp_peers.yaml   # Expected BGP peers
-│   ├── expected_ldp_peers.yaml   # Expected LDP peers
-│   ├── expected_mpls_config.yaml # Expected MPLS config
-│   └── expected_ospf_neighbors.yaml # Expected OSPF neighbors
-├── results/                      # Test results directory (auto-created)
-├── archive/                      # pyATS archives (auto-created)
-└── requirements.txt              # Dependencies
-```
-
-## Requirements
-
-- Python 3.6+
-- pyATS and Genie
-- Network devices with SSH access
-
 ## Installation
 
 1. Clone this repository:
