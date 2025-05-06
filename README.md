@@ -29,7 +29,7 @@ docker build -t network-validation-suite .
 
 3. Run the Docker container
 ```bash
-docker run -it --network=host -v .:/app network-validation-suite bash
+docker run -it --rm --network=host -v .:/app network-validation-suite bash
 ```
 
 ### Docker Compose (Optional)
