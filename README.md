@@ -18,7 +18,7 @@ This suite provides automated testing for:
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/network-validation-suite.git
+git clone https://github.com/DeanTognolini/network-validation-suite.git
 cd network-validation-suite
 ```
 
