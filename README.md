@@ -104,7 +104,7 @@ python -m tests.ospf_validator -testbed_file testbed.yaml
 ## Test Details
 
 ### Configuration Validator
-Tests security configurations including:
+Tests configurations including:
 - AAA configuration
 - SSH settings
 - TTY configurations
@@ -113,7 +113,7 @@ Tests security configurations including:
 
 ### Topology Validator
 Verifies network topology using CDP:
-- Validates CDP neighbors match expected topology
+- Validates CDP neighbors match expected topology defined in the testbed
 - Checks for unexpected neighbors
 - Normalizes interface names for consistent comparison
 
