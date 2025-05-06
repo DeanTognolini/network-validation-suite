@@ -1,0 +1,74 @@
+# Expected MPLS Configuration
+# Format: device_name: {enabled_interfaces: [], tunnel_count: int, forwarding_entries_min: int}
+
+# Core Routers
+core-router-1:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+    - GigabitEthernet0/3
+  tunnel_count: 4
+  forwarding_entries_min: 50
+
+core-router-2:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+    - GigabitEthernet0/3
+  tunnel_count: 4
+  forwarding_entries_min: 50
+
+# Edge Routers
+edge-router-1:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+  tunnel_count: 2
+  forwarding_entries_min: 30
+
+edge-router-2:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+  tunnel_count: 2
+  forwarding_entries_min: 30
+
+# Distribution Routers
+distribution-router-1:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+  tunnel_count: 0
+  forwarding_entries_min: 20
+
+distribution-router-2:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+  tunnel_count: 0
+  forwarding_entries_min: 20
+
+# Provider Edge Routers
+pe-router-1:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+    - TenGigabitEthernet1/0
+  tunnel_count: 0
+  forwarding_entries_min: 100
+  
+pe-router-2:
+  enabled_interfaces:
+    - GigabitEthernet0/0
+    - GigabitEthernet0/1
+    - GigabitEthernet0/2
+    - TenGigabitEthernet1/0
+  tunnel_count: 0
+  forwarding_entries_min: 100
