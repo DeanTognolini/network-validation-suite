@@ -52,22 +52,33 @@ git clone https://github.com/yourusername/network-validation-suite.git
 cd network-validation-suite
 ```
 
-2. Create the necessary directories:
+2. Build the Docker image
+```bash
+docker build -t network-validation-suite .
+```
+
+3. Run the Docker container
+```bash
+docker run -it --network=host -v .:/app network-validation-suite bash
+```
+
+### Docker Compose (Optional)
+```yaml
+version: '3'
+services:
+  network-validation-suite:
+    build: .
+    network_mode: "host"
+    volumes:
+      - .:/app
+    command: bash
+```
+
+Then run with:
 
 ```bash
-mkdir -p tests config
-```
-
-3. Install required packages:
-
-```bash
-pip install -r requirements.txt
-```
-
-Contents of `requirements.txt`:
-```
-pyats[full]
-pyyaml
+docker-compose up -d
+docker-compose exec network-validation-suite bash
 ```
 
 ## Setup
