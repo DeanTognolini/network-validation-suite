@@ -1,8 +1,0 @@
-version: '3'
-services:
-  network-validator:
-    build: .
-    network_mode: "host"
-    volumes:
-      - .:/app
-    command: bash
