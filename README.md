@@ -15,6 +15,10 @@ Work in progress:
 - BGP Peer Validation
 - MPLS Configuration and Operation
 
+## Requirements
+
+All you need is the [Docker Engine](https://docs.docker.com/engine/install/) installed.
+
 ## Installation
 
 1. Clone this repository:
