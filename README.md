@@ -6,11 +6,13 @@ A comprehensive set of pyATS tests for validating network device configurations 
 
 This suite provides automated testing for:
 
+- OSPF Neighbor Validation
+- LDP Neighbor Validation
+
+Work in progress:
 - Device Configuration (AAA, SSH, TTY, Users, Interfaces)
 - Network Topology (CDP neighbors)
-- OSPF Neighbor Validation
 - BGP Peer Validation
-- LDP Peer Validation
 - MPLS Configuration and Operation
 
 ## Installation
@@ -29,145 +31,81 @@ docker build -t network-validation-suite .
 
 3. Run the Docker container
 ```bash
-docker run -it --rm --network=host -v .:/app network-validation-suite bash
-```
-
-### Docker Compose (Optional)
-```yaml
-version: '3'
-services:
-  network-validation-suite:
-    build: .
-    network_mode: "host"
-    volumes:
-      - .:/app
-    command: bash
-```
-
-Then run with:
-
-```bash
-docker-compose up -d
-docker-compose exec network-validation-suite bash
+docker run -it --rm --name network-validation-suite -v .:/app -p 8080:8080 network-validation-suite bash
 ```
 
 ## Setup
 
 ### 1. Testbed File
 
-The `testbed.yaml` file describes your network devices and their topology. An example is provided that includes:
-
-- Core routers (core-router-1, core-router-2)
-- Edge routers (edge-router-1, edge-router-2, inet-edge)
-- Distribution routers (distribution-router-1, distribution-router-2)
-- Access routers (access-router-1 through access-router-4)
-- Provider edge routers (pe-router-1, pe-router-2)
-- Management router (mgmt-router)
+The `testbed.yaml` file is stored in the `config` dir and describes your network devices and their topology. An example is provided.
 
 The testbed file contains:
 - Device definitions (OS, type, IP addresses, credentials)
 - Interface definitions (names, IP addresses)
 - Network topology (links between devices)
 
-### 2. Expected Configuration Files
+In the testbed.yaml file, change `username` to work with your environment. The password will be requested at runtime.
 
-The `/config` directory contains YAML files that define the expected state of your network:
+### 2. Define expected states
 
-- **expected_bgp_peers.yaml** - Defines BGP peers and their expected states
-- **expected_ldp_peers.yaml** - Defines LDP peers and their operational states
-- **expected_mpls_config.yaml** - Defines MPLS interfaces and forwarding configuration
-- **expected_ospf_neighbors.yaml** - Defines OSPF neighbor counts per process
+In each of the test folders contains the pyATS testscript, in here define the expected state of your network. An example is provided within each test script.
+
+Example:
+```python
+EXPECTED_OSPF_PEERS = {
+    # Format: 'device_name': [{'peer_id': 'id', 'expected_state': 'state'}]
+    'router1': [
+        {'peer_id': '10.0.0.1', 'expected_state': 'full'},
+        {'peer_id': '10.0.0.2', 'expected_state': 'full/dr'}
+    ],
+    'router2': [
+        {'peer_id': '10.0.0.2', 'expected_state': 'full/bdr'},
+        {'peer_id': '10.0.0.3', 'expected_state': 'full/bdr'},
+    ]
+}
+```
 
 ## Running Tests
 
-### Using the Job File (Recommended)
+### Using the Job Files
 
-The `network_validation_job.py` file runs all tests sequentially:
+Example using the `ospf_nei_check` test.
 
 ```bash
-pyats run job network_validation_job.py
+pyats run job ospf_nei_check/ospf_nei_check_job.py --testbed testbed.yaml
 ```
 
 This will:
 - Connect to all devices in the testbed
 - Run all validation tests
-- Generate a consolidated HTML report
-
-### Running Individual Tests
-
-You can also run individual tests:
-
-```bash
-python -m tests.ospf_validator -testbed_file testbed.yaml
-```
+- Generate a HTML report
 
 ## Test Details
-
-### Configuration Validator
-Tests configurations including:
-- AAA configuration
-- SSH settings
-- TTY configurations
-- User accounts
-- Interface configurations
-
-### Topology Validator
-Verifies network topology using CDP:
-- Validates CDP neighbors match expected topology defined in the testbed
-- Checks for unexpected neighbors
-- Normalizes interface names for consistent comparison
 
 ### OSPF Validator
 Validates OSPF neighbor relationships:
 - Compares neighbor counts against expected values
 - Verifies OSPF neighbor states (FULL/2WAY)
-- Supports multiple OSPF processes
-
-### BGP Validator
-Validates BGP peering relationships:
-- Verifies expected BGP peers exist
-- Checks BGP session states
-- Validates AS numbers
-- Confirms routes are being exchanged
 
 ### LDP Validator
 Validates MPLS LDP operations:
 - Verifies LDP peers are operational
-- Checks label bindings are exchanged
-- Validates LDP is enabled on expected interfaces
 
-### MPLS Validator
-Validates MPLS configuration:
-- Verifies MPLS is enabled on correct interfaces
-- Checks forwarding table entry counts
-- Validates MPLS TE tunnels if configured
+## Viewing the Test Reports
 
-## Customization
+The pyATS framework generates detailed reports in the `/root/.pyats/archive` directory by default.
 
-### Modifying Test Scripts
-
-Each test script follows the same structure:
-- `CommonSetup`: Connects to devices
-- Test Case Classes: Contains various test methods
-- `CommonCleanup`: Disconnects from devices
-
-You can add new test methods or modify existing ones to meet your requirements.
-
-### Adapting Configuration Files
-
-Update the YAML configuration files in the `config/` directory to reflect your network's expected state. The examples provided show the structure, but should be customized for your environment.
-
-## Test Reports
-
-The pyATS framework generates detailed reports in the `archive` directory:
+The reports contain:
 - HTML report with overall results
 - Log files for each test
 - Pass/fail status and detailed error messages
 
+To view the reports, run the `pyats logs view --host 0.0.0.0 --p 8080`, and navigate to http://localhost:8080 in your hosts web browser. Note that if you have specified a port other than `8080` you need to connect to the port you have set during the `docker run`.
+
 ## Troubleshooting
 
 - **Connection Issues**: Verify device credentials and SSH connectivity
-- **Parsing Errors**: Some command outputs vary by OS version - check the device output
 - **Test Failures**: Review logs in the archive directory for detailed error information
 - **Path Issues**: Ensure configuration files are in the correct directories
 
