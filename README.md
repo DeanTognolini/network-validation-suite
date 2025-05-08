@@ -8,11 +8,12 @@ This suite provides automated testing for:
 
 - OSPF Neighbor Validation
 - LDP Neighbor Validation
+- BGP Peer Validation (IOS-XE)
 
 Work in progress:
+- BGP Peer Validation (IOS-XR)
 - Device Configuration (AAA, SSH, TTY, Users, Interfaces)
 - Network Topology (CDP neighbors)
-- BGP Peer Validation
 - MPLS Configuration and Operation
 
 ## Requirements
