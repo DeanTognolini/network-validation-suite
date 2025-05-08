@@ -1,0 +1,56 @@
+testbed:
+  name: testbed
+  description: Example testbed file
+  credentials:
+    username: admin # Default username for all devices
+    password: "%ASK{}" # Prompt for password
+
+devices:
+  router1:
+    type: router
+    os: iosxe
+    platform: isr4k
+    chassis_type: single_rp
+    connections:
+      cli:
+        protocol: ssh
+        ip: 10.1.1.1
+    customer:
+      role: elsr
+      loc: site_a
+
+  router2:
+    type: router
+    os: iosxr
+    platform: ncs540
+    chassis_type: single_rp
+    connections:
+      cli:
+        protocol: ssh
+        ip: 10.1.1.2
+    customer:
+      role: elsr
+      loc: site_a
+
+topology:
+  router1:
+      interfaces:
+        Loopback0:
+          type: loopback
+          ipv4: 192.168.0.1/32
+          link: router1_Loopback0
+        GigabitEthernet0/0/0:
+          type: ethernet
+          ipv4: 10.1.2.1/30
+          link: link-1
+  
+  router2:
+      interfaces:
+        Loopback0:
+          type: loopback
+          ipv4: 192.168.0.2/32
+          link: router2_Loopback0
+        GigabitEthernet0/0/0/0:
+          type: ethernet
+          ipv4: 10.1.2.2
+          link: link-1
