@@ -35,7 +35,7 @@ docker build -t network-validation-suite .
 
 3. Run the Docker container
 ```bash
-docker run -it --rm --name network-validation-suite -v .:/app -p 8080:8080 network-validation-suite bash
+docker run -it --rm -v .:/app -p 8080:8080 network-validation-suite bash
 ```
 
 ## Setup
