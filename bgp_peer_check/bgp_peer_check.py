@@ -64,11 +64,23 @@ class BGPPeerValidator(aetest.Testcase):
                     continue
                 
                 # Parse device output
-                try:
-                    bgp_info = device.parse('show bgp all neighbors')
-                except Exception as e:
-                    self.failed(f"Failed to learn BGP from {device_name}: {e}")
-                    continue
+                # For IOS/IOS-XE
+                if device.os == 'iosxe':
+                    try:
+                        bgp = device.parse('show bgp all neighbors')
+                    except Exception as e:
+                        self.failed(f"Failed to parse OSPF neighbors for {device_name}: {e}")
+                        continue
+                # For IOS-XR
+                elif device.os == 'iosxr':
+                    try:
+                        bgp = device.parse('show bgp instance all sessions')
+                    except Exception as e:
+                        self.failed(f"Failed to parse OSPF neighbors for {device_name}: {e}")
+                        continue
+                    
+                else:
+                    self.failed(f"Device OS not found in testbed.yaml")
                     
                 # Check each expected peer
                 expected_peers = EXPECTED_BGP_PEERS.get(device_name, [])
@@ -77,38 +89,43 @@ class BGPPeerValidator(aetest.Testcase):
                     peer_id = peer_data.get('peer_id')
                     expected_state = peer_data.get('expected_state', {}).lower()
                     
-                    # Search for the peer in the BGP neighbors output
                     peer_found = False
                     actual_state = 'unknown'
                     
-                    for vrf_name, vrf_data in bgp_info.get('vrf', {}).items():
-                        for nei_id, nei_data in vrf_data.get('neighbor', {}).items():
-                            if nei_id == peer_id or peer_data.get('peer_id', '') == peer_id:
-                                peer_found = True
-                                """
-                                Get state & normalise - some variations in output format between OS
-                                """
-                                state = nei_data.get('session_state', '').lower()
-                                if state:
-                                    actual_state = state
-                                else:
+                    # For IOS/IOS-XE
+                    if device.os == 'iosxe':
+                        for vrf_name, vrf_data in bgp.get('vrf', {}).items():
+                            for nei_id, nei_data in vrf_data.get('neighbor', {}).items():
+                                if nei_id == peer_id:
+                                    peer_found = True
+                                    """
+                                    Get state & normalise - some variations in output format between OS
+                                    """
+                                    state = nei_data.get('session_state', '').lower()
+                                    if state:
+                                        actual_state = state
+                                    else:
+                                        break
+                                if peer_found:
                                     break
-                        if peer_found:
-                            break
-                    
-                    # If not found above, try alternative structure (some IOS-XR versions)
-                    #if not peer_found:
-                    #    for interfaces in bgp_peers.get('interfaces', []):
-                    #        for peer in interfaces.get('peers', []):
-                    #            if peer.get('peer_ldp_id', '') == peer_id:
-                    #                peer_found = True
-                    #                state = peer.get('state', '').lower()
-                    #                if state:
-                    #                    actual_state = state
-                    #                break
-                    #        if peer_found:
-                    #            break
-                    
+
+                    elif device.os == 'iosxr':
+                        for ins_name, ins_data in bgp.get('instance', {}).items():
+                            for vrf_name, vrf_data in ins_data.get('vrf', {}).items():
+                                for nei_id, nei_data in vrf_data.get('neighbors', {}).items():
+                                    if nei_id == peer_id:
+                                        peer_found = True
+                                        """
+                                        Get state & normalise - some variations in output format between OS
+                                        """
+                                        state = nei_data.get('nbr_state', '').lower()
+                                        if state:
+                                            actual_state = state
+                                        else:
+                                            break
+                                if peer_found:
+                                    break
+
                     # Validate the results
                     if not peer_found:
                         self.failed(f"{device_name}: Expected BGP peer {peer_id} not found")
