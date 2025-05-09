@@ -6,12 +6,11 @@ A comprehensive set of pyATS tests for validating network device configurations 
 
 This suite provides automated testing for:
 
-- OSPF Neighbor Validation
-- LDP Neighbor Validation
-- BGP Peer Validation (IOS-XE)
+- OSPF Neighbor Validation (IOS, IOS-XE & IOS-XR)
+- LDP Neighbor Validation (IOS, IOS-XE & IOS-XR)
+- BGP Peer Validation (IOS, IOS-XE & IOS-XR)
 
 Work in progress:
-- BGP Peer Validation (IOS-XR)
 - Device Configuration (AAA, SSH, TTY, Users, Interfaces)
 - Network Topology (CDP neighbors)
 - MPLS Configuration and Operation
