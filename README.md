@@ -114,7 +114,7 @@ The reports contain:
 - Log files for each test
 - Pass/fail status and detailed error messages
 
-To view the reports, run the `pyats logs view --host 0.0.0.0 --p 8080`, and navigate to http://localhost:8080 in your hosts web browser. Note that if you have specified a port other than `8080` you need to connect to the port you have set during the `docker run`.
+To view the reports, run the `pyats logs view --host 0.0.0.0 --port 8080`, and navigate to http://localhost:8080 in your hosts web browser. Note that if you have specified a port other than `8080` you need to connect to the port you have set during the `docker run`.
 
 ## Troubleshooting
 
