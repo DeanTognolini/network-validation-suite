@@ -25,6 +25,11 @@ EXPECTED_BGP_PEERS = {
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
+
+def normalize_bgp_state(state: str) -> str:
+    """Return a normalised BGP neighbor state string."""
+    return state.lower().strip() if state else ""
+
 class CommonSetup(aetest.CommonSetup):
 
     @aetest.subsection
@@ -98,10 +103,7 @@ class BGPPeerValidator(aetest.Testcase):
                             for nei_id, nei_data in vrf_data.get('neighbor', {}).items():
                                 if nei_id == peer_id:
                                     peer_found = True
-                                    """
-                                    Get state & normalise - some variations in output format between OS
-                                    """
-                                    state = nei_data.get('session_state', '').lower()
+                                    state = normalize_bgp_state(nei_data.get('session_state', ''))
                                     if state:
                                         actual_state = state
                                     else:
@@ -115,10 +117,7 @@ class BGPPeerValidator(aetest.Testcase):
                                 for nei_id, nei_data in vrf_data.get('neighbors', {}).items():
                                     if nei_id == peer_id:
                                         peer_found = True
-                                        """
-                                        Get state & normalise - some variations in output format between OS
-                                        """
-                                        state = nei_data.get('nbr_state', '').lower()
+                                        state = normalize_bgp_state(nei_data.get('nbr_state', ''))
                                         if state:
                                             actual_state = state
                                         else:

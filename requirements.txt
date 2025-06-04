@@ -1,3 +1,4 @@
 telnetlib-313-and-up
 pyats[full]
 pyyaml
+pytest

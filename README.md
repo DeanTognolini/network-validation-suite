@@ -85,6 +85,15 @@ This will:
 - Run all validation tests
 - Generate a HTML report
 
+### Running Unit Tests
+
+The helper functions used for state normalisation are covered by unit tests.
+Run them with:
+
+```bash
+pytest
+```
+
 ## Test Details
 
 ### OSPF Validator
