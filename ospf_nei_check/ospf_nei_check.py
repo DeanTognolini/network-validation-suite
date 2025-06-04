@@ -25,6 +25,21 @@ EXPECTED_OSPF_PEERS = {
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
+
+def normalize_ospf_state(state: str) -> str:
+    """Return a normalised OSPF neighbor state string."""
+    if not state:
+        return ""
+    state = state.lower().strip()
+    if '/' in state:
+        left, right = state.split('/', 1)
+        left = left.strip()
+        right = right.strip()
+        if right in {"", "-"}:
+            return left
+        return f"{left}/{right.strip('/')}"
+    return state
+
 class CommonSetup(aetest.CommonSetup):
 
     @aetest.subsection
@@ -96,27 +111,13 @@ class OSPFPeerValidator(aetest.Testcase):
                     if device.os == 'iosxe':
                         for int_name, int_data in ospf_neighbors.get('interfaces', {}).items():
                             for nei_id, nei_data in int_data.get('neighbors', {}).items():
-                                    if nei_id == peer_id:
-                                        peer_found = True
-                                        state = nei_data.get('state', '').lower()
-                                        """
-                                        Normalise neighbour state.
-
-                                        * "full/  -"  →  "full"
-                                        * "full/bdr" →  "full/bdr"
-                                        * "full/dr" →  "full/dr"
-                                        """
-                                        if '/' in state:
-                                            left, right = state.split('/', 1)
-                                            right = right.strip()
-                                            state = left.strip() if right == '-' else state.rstrip('/').strip()
-                                        else:
-                                            state = state.strip()
-
-                                        if state:
-                                            actual_state = state
-                                        else:
-                                            break
+                                if nei_id == peer_id:
+                                    peer_found = True
+                                    state = normalize_ospf_state(nei_data.get('state', ''))
+                                    if state:
+                                        actual_state = state
+                                    else:
+                                        break
                             if peer_found:
                                 break
 
@@ -125,21 +126,7 @@ class OSPFPeerValidator(aetest.Testcase):
                             for nei_id, nei_data in vrf_data.get('neighbors', {}).items():
                                 if nei_id == peer_id:
                                     peer_found = True
-                                    state = nei_data.get('state', '').lower()
-                                    """
-                                    Normalise neighbour state.
-
-                                    * "full/  -"  →  "full"
-                                    * "full/bdr" →  "full/bdr"
-                                    * "full/dr" →  "full/dr"
-                                    """
-                                    if '/' in state:
-                                        left, right = state.split('/', 1)
-                                        right = right.strip()
-                                        state = left.strip() if right == '-' else state.rstrip('/').strip()
-                                    else:
-                                        state = state.strip()
-
+                                    state = normalize_ospf_state(nei_data.get('state', ''))
                                     if state:
                                         actual_state = state
                                     else:
