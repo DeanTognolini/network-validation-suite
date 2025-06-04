@@ -69,14 +69,14 @@ class BGPPeerValidator(aetest.Testcase):
                     try:
                         bgp = device.parse('show bgp all neighbors')
                     except Exception as e:
-                        self.failed(f"Failed to parse OSPF neighbors for {device_name}: {e}")
+                        self.failed(f"Failed to parse BGP neighbors for {device_name}: {e}")
                         continue
                 # For IOS-XR
                 elif device.os == 'iosxr':
                     try:
                         bgp = device.parse('show bgp instance all sessions')
                     except Exception as e:
-                        self.failed(f"Failed to parse OSPF neighbors for {device_name}: {e}")
+                        self.failed(f"Failed to parse BGP neighbors for {device_name}: {e}")
                         continue
                     
                 else:
@@ -87,7 +87,7 @@ class BGPPeerValidator(aetest.Testcase):
                 # Extract peer id and expected state for each expected peer
                 for peer_data in expected_peers:
                     peer_id = peer_data.get('peer_id')
-                    expected_state = peer_data.get('expected_state', {}).lower()
+                    expected_state = peer_data.get('expected_state', 'established').lower()
                     
                     peer_found = False
                     actual_state = 'unknown'
