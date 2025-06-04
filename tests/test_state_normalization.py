@@ -23,6 +23,9 @@ setattr(testbed_mod, 'load', lambda *args, **kwargs: None)
 genie_mod.testbed = testbed_mod
 sys.modules.setdefault('genie', genie_mod)
 sys.modules.setdefault('genie.testbed', testbed_mod)
+abstraction_mod = types.ModuleType('genie.libs.abstraction')
+setattr(abstraction_mod, 'Lookup', type('Lookup', (), {}))
+sys.modules.setdefault('genie.libs.abstraction', abstraction_mod)
 
 from ospf_nei_check.ospf_nei_check import normalize_ospf_state
 from bgp_peer_check.bgp_peer_check import normalize_bgp_state
