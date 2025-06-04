@@ -8,6 +8,7 @@ You can define expected peers per device and validate that they exist and are op
 import logging
 from pyats import aetest
 from genie.testbed import load
+from genie.libs.abstraction import Lookup
 
 EXPECTED_OSPF_PEERS = {
     # Format: 'device_name': [{'peer_id': 'id', 'expected_state': 'state'}]
@@ -77,23 +78,15 @@ class OSPFPeerValidator(aetest.Testcase):
                     logger.info(f"No OSPF expectations defined for {device_name}, skipping")
                     continue
                 
-                # Get OSPF neighbors
-                if device.os == 'iosxe':
-                    try:
-                        ospf_neighbors = device.parse('show ip ospf neighbor')
-                    except Exception as e:
-                        self.failed(f"Failed to parse OSPF neighbors for {device_name}: {e}")
-                        continue
-                      
-                elif device.os == 'iosxr':
-                    try:
-                        ospf_neighbors = device.parse('show ospf neighbor')
-                    except Exception as e:
-                        self.failed(f"Failed to parse OSPF neighbors for {device_name}: {e}")
-                        continue
-                    
-                else:
-                    self.failed(f"Device OS not found in testbed.yaml")
+                # Get OSPF neighbors using Genie abstraction
+                try:
+                    lookup = Lookup.from_device(device)
+                    ospf_neighbors = lookup.parser.show_ospf_neighbor(device=device)
+                except Exception as e:
+                    self.failed(
+                        f"Failed to parse OSPF neighbors for {device_name}: {e}"
+                    )
+                    continue
 
                 # Check each expected peer
                 expected_peers = EXPECTED_OSPF_PEERS.get(device_name, [])

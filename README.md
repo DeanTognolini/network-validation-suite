@@ -9,6 +9,7 @@ This suite provides automated testing for:
 - OSPF Neighbor Validation (IOS, IOS-XE & IOS-XR)
 - LDP Neighbor Validation (IOS, IOS-XE & IOS-XR)
 - BGP Peer Validation (IOS, IOS-XE & IOS-XR)
+- Parsers leverage the Genie Abstraction API for cross-OS compatibility
 
 Work in progress:
 - Device Configuration (AAA, SSH, TTY, Users, Interfaces)
